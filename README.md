@@ -6,6 +6,27 @@ This solution will help customers to create auditing and monitoring solution for
 ## Architecture
 ![architecture overview](./images/Architecture.jpg)
 
+### Workflow
+
+- Share AMI with other AWS Accounts.
+    1. AWS AMI is shared with another AWS Account.
+    2. When AMI is shared, the ModifyImageAttribute event will be captured by an Amazon EventBridge event rule.
+    3. The consumer AWS account can view the shared AMI as private image.
+
+- Trigger AWS Lambda function to store data in DynamoDB table.
+    1. EventBridge will trigger Lambda function. This function will process the event.
+    2. After processing the event, it will store the data related to the shared AMI in DynamoDB table.
+
+- Using shared AWS AMI in consumer AWS Account
+    1. Shared AMI in consumer AWS Account will be referred/un-referred to create Launch Configuration, Launch Template, EC2 etc.
+    2. When AMI is used/un-referred then its event will be captured by EventBridge rule.
+    3. EventBridge will trigger the Lambda function, this Lambda function will update DynamoDB table item and add AMI usage details in Creator account with the help of a cross-account IAM role.
+    4. This Lambda function will also update the AMI id and EC2/Launch template id in the Mapping DynamoDB table in the same AWS Account. This is needed when the AMI is deregistered from Launch templates or EC2 instances. 
+
+- Un-register/Delete AMI in Creator account
+    1. When ModifyImageAttribute has remove action, then the Lambda function will validate that the given AMI does not have any usage in DynamoDB table.
+    2. If AMI is still being referenced, then Lambda function will trigger an email alert using SES.
+    3. SES email subscriber will receive the event notification.
 ## Prerequisites
 - At least 2 active AWS accounts.
 - AWS AMI should be created in one of the AWS account.

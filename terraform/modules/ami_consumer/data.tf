@@ -69,7 +69,6 @@ data "aws_iam_policy_document" "ami_usage_lambda_policy_document" {
       "dynamodb:Scan",
       "dynamodb:Query",
       "dynamodb:UpdateItem",
-      "dynamodb:DeleteTable",
       "dynamodb:CreateTable",
       "dynamodb:TagResource",
       "dynamodb:DescribeTable",

@@ -59,7 +59,6 @@ data "aws_iam_policy_document" "ami_share_lambda_policy_document" {
       "dynamodb:Scan",
       "dynamodb:Query",
       "dynamodb:UpdateItem",
-      "dynamodb:DeleteTable",
       "dynamodb:CreateTable",
       "dynamodb:TagResource",
       "dynamodb:DescribeTable",
@@ -106,7 +105,6 @@ data "aws_iam_policy_document" "external_dynamodb_access_policy_document" {
       "dynamodb:Scan",
       "dynamodb:Query",
       "dynamodb:UpdateItem",
-      "dynamodb:DeleteTable",
       "dynamodb:CreateTable",
       "dynamodb:TagResource",
       "dynamodb:DescribeTable",
@@ -119,22 +117,6 @@ data "aws_iam_policy_document" "external_dynamodb_access_policy_document" {
 }
 
 
-# data "aws_iam_policy_document" "external_assume_role" {
-
-#   statement {
-#     sid = "AssumeRole"
-
-#     actions = [
-#       "sts:AssumeRole"
-#     ]
-#     principals {
-#       type = "AWS"
-#       identifiers = ["arn:aws:iam::${local.consumer_account_id_1}:root",
-#       "arn:aws:iam::${local.creation_account_id}:root"]
-#     }
-#     effect = "Allow"
-#   }
-# }
 data "aws_iam_policy_document" "external_assume_role" {
   dynamic "statement" {
     for_each = var.account_email_mapping
