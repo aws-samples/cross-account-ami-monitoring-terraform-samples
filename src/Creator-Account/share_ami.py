@@ -17,14 +17,26 @@ def insert_dynamodb(image_id,shared_account_id,shared_org_ou):
     entity_list = shared_account_id + shared_org_ou
 
     for entity_id in entity_list:
-        response = ami_table.put_item(
-            # Data to be inserted
-            Item={
+        # response = ami_table.put_item(
+        #     # Data to be inserted
+        #     Item={
+        #         'image_id': image_id,
+        #         'shared_entitiy_id': entity_id,
+        #         'AMI_share_status': 'AMI Shared'
+        #     }
+        # )
+        status = 'AMI Shared'
+        response = ami_table.update_item(
+            Key={
                 'image_id': image_id,
-                'shared_entitiy_id': entity_id,
-                'AMI_share_status': 'AMI Shared'
-            }
-        )
+                'shared_entitiy_id': entity_id
+            },
+            UpdateExpression="set AMI_share_status=:status",
+            ExpressionAttributeValues={
+                ':status':  status
+            },
+            ReturnValues="UPDATED_NEW"
+            )
 
 def update_dynamodb(record,image_id,shared_account_id,shared_org_ou):
     for r in record['shared_account_id']:
